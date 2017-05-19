@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import re
 import requests
 import json
+from collections import namedtuple
 
 searchUrl = ("https://www.youtube.com/results?search_query=")
 playUrl = ("https://www.youtube.com")
@@ -45,7 +46,9 @@ qString = input()
 qString = re.sub(' ', '+', qString)
 soup = getSoup()
 getVideoInfo(soup)
-print (MapResult)
+jSonMap = json.dumps(MapResult, ensure_ascii=False)
+print (jSonMap)
+#print (json.loads(str(MapResult)))
 #print(json.dump(str(MapResult)))
 #j=print(json.dumps({'4': 5, '6': 7}, sort_keys=True, indent=4))
 #print(j)
