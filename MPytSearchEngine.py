@@ -1,11 +1,16 @@
 from bs4 import BeautifulSoup
+import configparser
 import re
 import requests
 import json
 from collections import namedtuple
 
-searchUrl = ("https://www.youtube.com/results?search_query=")
-playUrl = ("https://www.youtube.com")
+config = configparser.RawConfigParser()
+config.read('ConfigFile.properties')
+print (config.get('YTConfig', 'YTConfig.YTQuery'))
+
+searchUrl = (config.get('YTConfig', 'YTConfig.YTQuery'))
+playUrl = (config.get('YTConfig', 'YTConfig.PlayURL'))
 MapResult = {}
 
 def getSoup():
@@ -48,7 +53,3 @@ soup = getSoup()
 getVideoInfo(soup)
 jSonMap = json.dumps(MapResult, ensure_ascii=False)
 print (jSonMap)
-#print (json.loads(str(MapResult)))
-#print(json.dump(str(MapResult)))
-#j=print(json.dumps({'4': 5, '6': 7}, sort_keys=True, indent=4))
-#print(j)

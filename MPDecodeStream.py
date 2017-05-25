@@ -52,7 +52,6 @@ class YTDnld:
     def cnvrtYTFile(self):
         if self.fileFormat is "mp3":
             cmdMP3 = "ffmpeg -hide_banner -y -i \"" + self.filename + "\" -codec:a libmp3lame -qscale:a 1 \"" + self.YTFileInfo.title + ".mp3\""
-            print(cmdMP3)
             self.execConversion(cmdMP3)
         elif self.fileFormat is "avi":
             # ffmpeg -async 1 -i inputVideo.flv -f avi -b 700k -qscale 0 -ab 160k -ar 44100 outputVideo.avi
@@ -60,12 +59,12 @@ class YTDnld:
             self.execConversion(cmdAVI)
         elif self.fileFormat is "mp4":
             if self.YTFileInfo.extension == "webm":
-                # print (self.YTFileInfo.extension)
                 cmdMP4 = "ffmpeg  -hide_banner -y -async 1 -i \"" + self.filename + "\" -f mp4 -vcodec libx264 -preset fast -profile:v main -acodec aac \"" + self.YTFileInfo.title + ".mp4\""
                 self.execConversion(cmdMP4)
             None
 
     def execConversion(self, cmd):
+        print (cmd)
         thread = pexpect.spawn(cmd)
         cpl = thread.compile_pattern_list([
             pexpect.EOF,
