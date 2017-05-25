@@ -7,7 +7,6 @@ from collections import namedtuple
 
 config = configparser.RawConfigParser()
 config.read('ConfigFile.properties')
-print (config.get('YTConfig', 'YTConfig.YTQuery'))
 
 searchUrl = (config.get('YTConfig', 'YTConfig.YTQuery'))
 playUrl = (config.get('YTConfig', 'YTConfig.PlayURL'))
