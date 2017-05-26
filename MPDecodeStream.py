@@ -4,6 +4,9 @@ import time
 import subprocess
 import os
 import pexpect
+from pexpect import popen_spawn
+import configparser
+
 
 
 class YTDnld:
@@ -11,6 +14,11 @@ class YTDnld:
     filename = ""
     YTFile = None
     YTFileInfo = None
+    config = configparser.RawConfigParser()
+    config.read('ConfigFile.properties')
+    ffmpegExe = config.get('ffmpeg', 'ffmpeg.LocalPath')
+    tempDir = config.get('Directory', 'Directory.TempDir')
+    fileDir = config.get('Directory', 'Directory.FileDir')
 
     def __init__(self, args):
         if len(args) == 1:
@@ -45,21 +53,23 @@ class YTDnld:
             self.YTFileInfo = self.YTFile.getbestaudio()
         else:
             self.YTFileInfo = self.YTFile.getbest()
-        self.filename = self.YTFileInfo.download(quiet=True, callback=self.stdoutDownload,
-                                                 filepath=self.YTFileInfo.title + "." + self.YTFileInfo.extension)
-        print ()
+        self.filename = self.YTFileInfo.title + "." + self.YTFileInfo.extension
+        self.YTFileInfo.download(quiet=True, callback=self.stdoutDownload,
+                                                 filepath=self.tempDir + self.filename)
+
+        print (self.filename)
 
     def cnvrtYTFile(self):
         if self.fileFormat is "mp3":
-            cmdMP3 = "ffmpeg -hide_banner -y -i \"" + self.filename + "\" -codec:a libmp3lame -qscale:a 1 \"" + self.YTFileInfo.title + ".mp3\""
+            cmdMP3 = self.ffmpegExe + "ffmpeg -hide_banner -y -i \"" + self.tempDir + self.filename + "\" -codec:a libmp3lame -qscale:a 1 \"" + self.fileDir + self.YTFileInfo.title + ".mp3\""
             self.execConversion(cmdMP3)
         elif self.fileFormat is "avi":
             # ffmpeg -async 1 -i inputVideo.flv -f avi -b 700k -qscale 0 -ab 160k -ar 44100 outputVideo.avi
-            cmdAVI = "ffmpeg -hide_banner -y -async 1 -i \"" + self.filename + "\" -f avi -b 700k -qscale 0 -ab 160k -ar 44100 \"" + self.YTFileInfo.title + ".avi\""
+            cmdAVI = self.ffmpegExe + "ffmpeg -hide_banner -y -async 1 -i \"" + self.tempDir + self.filename + "\" -f avi -b 700k -qscale 0 -ab 160k -ar 44100 \"" + self.fileDir + self.YTFileInfo.title + ".avi\""
             self.execConversion(cmdAVI)
         elif self.fileFormat is "mp4":
             if self.YTFileInfo.extension == "webm":
-                cmdMP4 = "ffmpeg  -hide_banner -y -async 1 -i \"" + self.filename + "\" -f mp4 -vcodec libx264 -preset fast -profile:v main -acodec aac \"" + self.YTFileInfo.title + ".mp4\""
+                cmdMP4 = self.ffmpegExe + "ffmpeg  -hide_banner -y -async 1 -i \"" + self.tempDir + self.filename + "\" -f mp4 -vcodec libx264 -preset fast -profile:v main -acodec aac \"" + self.fileDir + self.YTFileInfo.title + ".mp4\""
                 self.execConversion(cmdMP4)
             None
 
