@@ -3,6 +3,8 @@ import configparser
 import re
 import requests
 import json
+import certifi
+import urllib3
 from collections import namedtuple
 
 config = configparser.RawConfigParser()
@@ -13,9 +15,10 @@ playUrl = (config.get('YTConfig', 'YTConfig.PlayURL'))
 MapResult = {}
 
 def getSoup():
-    httpRequest  = requests.get(searchUrl+qString)
-    flatData = httpRequest.text
-    return BeautifulSoup(flatData, "html.parser")
+    print (searchUrl+qString)
+    http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
+    httpRequest = http.request('GET', searchUrl+qString)
+    return BeautifulSoup(httpRequest.data, "html.parser")
     
 def getVideoInfo(soup):
     i=0

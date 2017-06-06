@@ -4,7 +4,6 @@ import time
 import subprocess
 import os
 import pexpect
-from pexpect import popen_spawn
 import configparser
 
 
@@ -19,6 +18,7 @@ class YTDnld:
     ffmpegExe = config.get('ffmpeg', 'ffmpeg.LocalPath')
     tempDir = config.get('Directory', 'Directory.TempDir')
     fileDir = config.get('Directory', 'Directory.FileDir')
+    playURL = config.get('YTConfig', 'YTConfig.PlayURL')
 
     def __init__(self, args):
         if len(args) == 1:
@@ -38,14 +38,16 @@ class YTDnld:
                     sys.stdout.write("[Warning] Format not found -> apply default MP3 format.\n")
             else:
                 sys.stdout.write("[Info] Format not found -> apply default MP3 format.\n")
-                print (self.fileFormat)
         except Exception as e:
             sys.stdout.write("[Warning] Format not found -> apply default MP3 format.\n")
 
         try:
-            self.YTFile = pafy.new(args[1])
+            if args[1].lower().startswith("^http"):
+                self.YTFile = pafy.new(args[1])
+            else:
+                self.YTFile = pafy.new(self.playURL + args[1])
         except Exception as e:
-            sys.stderr.write("[Error] URL Not found, please retry.")
+            sys.stderr.write("[Error] URL Not found, please retry." + e)
             quit()
 
     def dwnldYTFile(self):
@@ -56,8 +58,6 @@ class YTDnld:
         self.filename = self.YTFileInfo.title + "." + self.YTFileInfo.extension
         self.YTFileInfo.download(quiet=True, callback=self.stdoutDownload,
                                                  filepath=self.tempDir + self.filename)
-
-        print (self.filename)
 
     def cnvrtYTFile(self):
         if self.fileFormat is "mp3":
@@ -111,7 +111,7 @@ class YTDnld:
             None
 
     def destryDwnldFile(self):
-        os.remove(self.filename)
+        os.remove(self.tempDir + self.filename)
 
 
 dwnld = YTDnld(sys.argv)
