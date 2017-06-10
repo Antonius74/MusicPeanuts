@@ -2,6 +2,7 @@ import pafy
 import sys
 import time
 import subprocess
+import shutil
 import os
 import pexpect
 import configparser
@@ -71,6 +72,8 @@ class YTDnld:
             if self.YTFileInfo.extension == "webm":
                 cmdMP4 = self.ffmpegExe + "ffmpeg  -hide_banner -y -async 1 -i \"" + self.tempDir + self.filename + "\" -f mp4 -vcodec libx264 -preset fast -profile:v main -acodec aac \"" + self.fileDir + self.YTFileInfo.title + ".mp4\""
                 self.execConversion(cmdMP4)
+            elif self.YTFileInfo.extension == "mp4":
+                shutil.move(self.tempDir + self.filename, self.fileDir + self.YTFileInfo.title)
             None
 
     def execConversion(self, cmd):
