@@ -1,18 +1,16 @@
 from bs4 import BeautifulSoup
 import configparser
 import re
-import requests
 import json
 import certifi
 import urllib3
-from collections import namedtuple
 
 config = configparser.RawConfigParser()
 config.read('ConfigFile.properties')
 
 searchUrl = (config.get('YTConfig', 'YTConfig.YTQuery'))
 playUrl = (config.get('YTConfig', 'YTConfig.PlayURL'))
-MapResult = {}
+MapResultVideo = {}
 
 def getSoup():
     print (searchUrl+qString)
@@ -42,7 +40,30 @@ def getVideoInfo(soup):
                                 vTime = span.contents[0]             
                         i=i+1
                         MapContent = {"Title":title, "Type":"Video", "YTRef":dataContextItem, "Time":vTime, "Thumb":srcThumb}
-                        MapResult.update({i:MapContent})
+                        MapResultVideo.update({i:MapContent})
+                elif 'yt-lockup-playlist' in ytClass:
+                    try:
+                        if divResult.div.div.a['href'] != None:
+                            print (divResult.div.div.a['href'])
+                            print(divResult.div.div.a.div.span.img)
+                            print()
+                        elif divResult.div.div.a['href'] != None:
+                            print (divResult.div.div.a['href'])
+                            print(divResult.div.div.a.div.span.img)
+                            print()
+                    except:
+                        None
+#                    for span in divResult.find_all('span'):
+#                        print(span.div.div.a)
+#                        classInSpan = span.get("class")
+#                        if classInSpan != None:
+#                            if 'yt-thumb-simple' in classInSpan:
+#                                print (classInSpan)
+#                                for img in span.find_all("img"):
+#                                    print (span)
+                                #    print (img.get("src"))
+
+
 
 
 def getVideoResult():
@@ -53,5 +74,5 @@ qString = input()
 qString = re.sub(' ', '+', qString)
 soup = getSoup()
 getVideoInfo(soup)
-jSonMap = json.dumps(MapResult, ensure_ascii=False)
-print (jSonMap)
+jSonMap = json.dumps(MapResultVideo, ensure_ascii=False)
+#print (jSonMap)
