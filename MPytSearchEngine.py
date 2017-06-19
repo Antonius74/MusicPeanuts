@@ -39,30 +39,29 @@ def getVideoInfo(soup):
                             if "video-time" in span.get("class"):
                                 vTime = span.contents[0]             
                         i=i+1
-                        MapContent = {"Title":title, "Type":"Video", "YTRef":dataContextItem, "Time":vTime, "Thumb":srcThumb}
+                        MapContent = {"Title":title, "Type":"Video", "Source":"YT", "DataRef":dataContextItem, "Time":vTime, "VideoCount":None, "Thumb":srcThumb}
                         MapResultVideo.update({i:MapContent})
                 elif 'yt-lockup-playlist' in ytClass:
                     try:
                         if divResult.div.div.a['href'] != None:
-                            print (divResult.div.div.a['href'])
-                            print(divResult.div.div.a.div.span.img)
-                            print()
-                        elif divResult.div.div.a['href'] != None:
-                            print (divResult.div.div.a['href'])
-                            print(divResult.div.div.a.div.span.img)
-                            print()
-                    except:
-                        None
-#                    for span in divResult.find_all('span'):
-#                        print(span.div.div.a)
-#                        classInSpan = span.get("class")
-#                        if classInSpan != None:
-#                            if 'yt-thumb-simple' in classInSpan:
-#                                print (classInSpan)
-#                                for img in span.find_all("img"):
-#                                    print (span)
-                                #    print (img.get("src"))
+                            plHref = divResult.div.div.a['href']
+                            if divResult.div.div.a.div.span.img['src'].startswith('http'):
+                                srcthumb = divResult.div.div.a.div.span.img['src']
+                            else:
+                                srcthumb = divResult.div.div.a.div.span.img['data-thumb']
+                            for div in divResult.div.find_all('div'):
+                                if "yt-lockup-content" in div.get("class"):
+                                    title = div.a['title']
+                            for div in divResult.div.div.a.find_all('div'):
+                                if "sidebar" in div.get("class"):
+                                    countV = div.span.span.span.b.string
+                            i = i + 1
+                            MapContent = {"Title": title, "Type": "PL", "Source":"YT", "DataRef": plHref, "Time": None, "VideoCount": countV, "Thumb": srcThumb}
+                            MapResultVideo.update({i: MapContent})
 
+
+                    except Exception as e:
+                        print(e)
 
 
 
@@ -74,5 +73,5 @@ qString = input()
 qString = re.sub(' ', '+', qString)
 soup = getSoup()
 getVideoInfo(soup)
-jSonMap = json.dumps(MapResultVideo, ensure_ascii=False)
-#print (jSonMap)
+jSonMapYT = json.dumps(MapResultVideo, ensure_ascii=False)
+print (jSonMapYT)
