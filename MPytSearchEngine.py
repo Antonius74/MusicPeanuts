@@ -64,6 +64,8 @@ def getVideoInfo(soup):
                         print(e)
 
 
+def getPLDetails(plList):
+    return
 
 def getVideoResult():
     return
