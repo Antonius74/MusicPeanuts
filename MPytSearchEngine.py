@@ -12,10 +12,10 @@ searchUrl = (config.get('YTConfig', 'YTConfig.YTQuery'))
 playUrl = (config.get('YTConfig', 'YTConfig.PlayURL'))
 MapResultVideo = {}
 
-def getSoup():
-    print (searchUrl+qString)
+def getSoup(qString):
+    print (qString)
     http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
-    httpRequest = http.request('GET', searchUrl+qString)
+    httpRequest = http.request('GET', qString)
     return BeautifulSoup(httpRequest.data, "html.parser")
     
 def getVideoInfo(soup):
@@ -46,9 +46,9 @@ def getVideoInfo(soup):
                         if divResult.div.div.a['href'] != None:
                             plHref = divResult.div.div.a['href']
                             if divResult.div.div.a.div.span.img['src'].startswith('http'):
-                                srcthumb = divResult.div.div.a.div.span.img['src']
+                                srcThumb = divResult.div.div.a.div.span.img['src']
                             else:
-                                srcthumb = divResult.div.div.a.div.span.img['data-thumb']
+                                srcThumb = divResult.div.div.a.div.span.img['data-thumb']
                             for div in divResult.div.find_all('div'):
                                 if "yt-lockup-content" in div.get("class"):
                                     title = div.a['title']
@@ -64,7 +64,7 @@ def getVideoInfo(soup):
                         print(e)
 
 
-def getPLDetails(plList):
+def getPLVideo(plList):
     return
 
 def getVideoResult():
@@ -73,7 +73,7 @@ def getVideoResult():
 print ("Enter qString:")
 qString = input()
 qString = re.sub(' ', '+', qString)
-soup = getSoup()
+soup = getSoup(searchUrl+qString)
 getVideoInfo(soup)
 jSonMapYT = json.dumps(MapResultVideo, ensure_ascii=False)
 print (jSonMapYT)
