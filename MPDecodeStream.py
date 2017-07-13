@@ -1,7 +1,5 @@
 import pafy
 import sys
-import time
-import subprocess
 import shutil
 import os
 import pexpect
@@ -59,8 +57,6 @@ class YTDnld:
             self.YTFileInfo = self.YTFile.getbestaudio()
         else:
             self.YTFileInfo = self.YTFile.getbest()
-        #self.filename = self.YTFileInfo.title + "." + self.YTFileInfo.extension
-
         self.filename = str(os.getpid())
         print (self.filename)
         self.YTFileInfo.download(quiet=True, callback=self.stdoutDownload,
@@ -68,12 +64,10 @@ class YTDnld:
 
     def cnvrtYTFile(self):
         if self.fileFormat is "mp3":
-            #cmdMP3 = self.ffmpegExe + "ffmpeg -hide_banner -y -i \"" + self.tempDir + self.filename.replace("\"", u"\\\u0022") + "\" -codec:a libmp3lame -qscale:a 1 \"" + self.fileDir + self.YTFileInfo.title.replace("\"", "").replace("(", "").replace(")", "") + ".mp3\""
             cmdMP3 = self.ffmpegExe + "ffmpeg -hide_banner -y -i \"" + self.tempDir + self.filename + "\" -codec:a libmp3lame -qscale:a 1 \"" + self.fileDir + self.filename + ".mp3\""
             self.execConversion(cmdMP3)
             self.renameFile(self.fileDir + self.filename + ".mp3", self.fileDir + self.YTFileInfo.title + ".mp3")
         elif self.fileFormat is "avi":
-            # ffmpeg -async 1 -i inputVideo.flv -f avi -b 700k -qscale 0 -ab 160k -ar 44100 outputVideo.avi
             cmdAVI = self.ffmpegExe + "ffmpeg -hide_banner -y -async 1 -i \"" + self.tempDir + self.filename + "\" -f avi -b 700k -qscale 0 -ab 160k -ar 44100 \"" + self.fileDir + self.filename + ".avi\""
             self.execConversion(cmdAVI)
             self.renameFile(self.fileDir + self.filename + ".avi", self.fileDir + self.YTFileInfo.title + ".avi")
@@ -104,9 +98,6 @@ class YTDnld:
                     thread.close
                 elif i == 2:
                     pass
-            if self.fileFormat is "mp3" or self.fileFormat is "avi" or self.fileFormat is "mp4" or self.YTFileInfo.extension == "webm":
-                #dwnld.destryDwnldFile()
-                sys.stdout.write("\n")
         except ValueError:
             sys.stderr.write (ValueError)
 
