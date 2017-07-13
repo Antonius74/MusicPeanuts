@@ -58,7 +58,6 @@ class YTDnld:
         else:
             self.YTFileInfo = self.YTFile.getbest()
         self.filename = str(os.getpid())
-        print (self.filename)
         self.YTFileInfo.download(quiet=True, callback=self.stdoutDownload,
                                                  filepath=self.tempDir + self.filename)
 
