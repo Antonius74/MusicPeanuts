@@ -35,6 +35,9 @@ class YTDnld:
                 elif fileFormat == "mp3":
                     sys.stdout.write("[Info] Apply MP3 format.\n")
                     self.fileFormat = "mp3"
+                elif fileFormat == "avi":
+                    sys.stdout.write("[Info] Apply AVI format.\n")
+                    self.fileFormat = "avi"
                 else:
                     sys.stdout.write("[Warning] Format not found -> apply default MP3 format.\n")
             else:
@@ -56,46 +59,56 @@ class YTDnld:
             self.YTFileInfo = self.YTFile.getbestaudio()
         else:
             self.YTFileInfo = self.YTFile.getbest()
-        self.filename = self.YTFileInfo.title + "." + self.YTFileInfo.extension
+        #self.filename = self.YTFileInfo.title + "." + self.YTFileInfo.extension
+
+        self.filename = str(os.getpid())
+        print (self.filename)
         self.YTFileInfo.download(quiet=True, callback=self.stdoutDownload,
                                                  filepath=self.tempDir + self.filename)
 
     def cnvrtYTFile(self):
         if self.fileFormat is "mp3":
-            cmdMP3 = self.ffmpegExe + "ffmpeg -hide_banner -y -i \"" + self.tempDir + self.filename + "\" -codec:a libmp3lame -qscale:a 1 \"" + self.fileDir + self.YTFileInfo.title + ".mp3\""
+            #cmdMP3 = self.ffmpegExe + "ffmpeg -hide_banner -y -i \"" + self.tempDir + self.filename.replace("\"", u"\\\u0022") + "\" -codec:a libmp3lame -qscale:a 1 \"" + self.fileDir + self.YTFileInfo.title.replace("\"", "").replace("(", "").replace(")", "") + ".mp3\""
+            cmdMP3 = self.ffmpegExe + "ffmpeg -hide_banner -y -i \"" + self.tempDir + self.filename + "\" -codec:a libmp3lame -qscale:a 1 \"" + self.fileDir + self.filename + ".mp3\""
             self.execConversion(cmdMP3)
+            self.renameFile(self.fileDir + self.filename + ".mp3", self.fileDir + self.YTFileInfo.title + ".mp3")
         elif self.fileFormat is "avi":
             # ffmpeg -async 1 -i inputVideo.flv -f avi -b 700k -qscale 0 -ab 160k -ar 44100 outputVideo.avi
-            cmdAVI = self.ffmpegExe + "ffmpeg -hide_banner -y -async 1 -i \"" + self.tempDir + self.filename + "\" -f avi -b 700k -qscale 0 -ab 160k -ar 44100 \"" + self.fileDir + self.YTFileInfo.title + ".avi\""
+            cmdAVI = self.ffmpegExe + "ffmpeg -hide_banner -y -async 1 -i \"" + self.tempDir + self.filename + "\" -f avi -b 700k -qscale 0 -ab 160k -ar 44100 \"" + self.fileDir + self.filename + ".avi\""
             self.execConversion(cmdAVI)
+            self.renameFile(self.fileDir + self.filename + ".avi", self.fileDir + self.YTFileInfo.title + ".avi")
         elif self.fileFormat is "mp4":
             if self.YTFileInfo.extension == "webm":
-                cmdMP4 = self.ffmpegExe + "ffmpeg  -hide_banner -y -async 1 -i \"" + self.tempDir + self.filename + "\" -f mp4 -vcodec libx264 -preset fast -profile:v main -acodec aac \"" + self.fileDir + self.YTFileInfo.title + ".mp4\""
+                cmdMP4 = self.ffmpegExe + "ffmpeg  -hide_banner -y -async 1 -i \"" + self.tempDir + self.filename + "\" -f mp4 -vcodec libx264 -preset fast -profile:v main -acodec aac \"" + self.fileDir + self.filename + ".mp4\""
                 self.execConversion(cmdMP4)
+                self.renameFile(self.fileDir + self.filename + ".mp4", self.fileDir + self.YTFileInfo.title + ".mp4")
             elif self.YTFileInfo.extension == "mp4":
                 shutil.move(self.tempDir + self.filename, self.fileDir + self.YTFileInfo.title)
             None
 
     def execConversion(self, cmd):
-        print (cmd)
-        thread = pexpect.spawn(cmd)
-        cpl = thread.compile_pattern_list([
-            pexpect.EOF,
-            "size(.*)"
-        ])
-        while True:
-            i = thread.expect_list(cpl, timeout=None)
-            if i == 0:
-                break
-            elif i == 1:
-                frame_number = thread.match.group(0)
-                self.stdoutConvert(str(frame_number))
-                thread.close
-            elif i == 2:
-                pass
-        if self.fileFormat is "mp3" or self.fileFormat is "avi" or self.fileFormat is "mp4" or self.YTFileInfo.extension == "webm":
-            dwnld.destryDwnldFile()
-            sys.stdout.write("\n")
+        print ("\n"+cmd)
+        try:
+            thread = pexpect.spawn(cmd)
+            cpl = thread.compile_pattern_list([
+                pexpect.EOF,
+                "size(.*)"
+            ])
+            while True:
+                i = thread.expect_list(cpl, timeout=None)
+                if i == 0:
+                    break
+                elif i == 1:
+                    frame_number = thread.match.group(0)
+                    self.stdoutConvert(str(frame_number))
+                    thread.close
+                elif i == 2:
+                    pass
+            if self.fileFormat is "mp3" or self.fileFormat is "avi" or self.fileFormat is "mp4" or self.YTFileInfo.extension == "webm":
+                #dwnld.destryDwnldFile()
+                sys.stdout.write("\n")
+        except ValueError:
+            sys.stderr.write (ValueError)
 
     def stdoutDownload(self, total, recvd, ratio, rate, eta):
         percent = (recvd / total) * 100
@@ -116,6 +129,9 @@ class YTDnld:
     def destryDwnldFile(self):
         os.remove(self.tempDir + self.filename)
 
+    def renameFile(self, pid, filename):
+        os.renames(pid, filename)
+        dwnld.destryDwnldFile()
 
 dwnld = YTDnld(sys.argv)
 dwnld.dwnldYTFile()
