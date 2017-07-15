@@ -7,7 +7,7 @@ import configparser
 
 
 
-class YTDnld:
+class YTDecodeStream:
     fileFormat = "mp3"
     filename = ""
     YTFile = None
@@ -123,6 +123,6 @@ class YTDnld:
         os.renames(pid, filename)
         dwnld.destryDwnldFile()
 
-dwnld = YTDnld(sys.argv)
+dwnld = YTDecodeStream(sys.argv)
 dwnld.dwnldYTFile()
 dwnld.cnvrtYTFile()
