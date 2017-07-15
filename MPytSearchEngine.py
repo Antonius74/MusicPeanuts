@@ -79,7 +79,7 @@ class YTSearchEngine:
             i = i + 1
         return json.dumps(self.MapResultVideo, ensure_ascii=False)
 
-    def getVideoResult():
+    def getVideoResult(self):
         return
 
 print ("Enter qString:")
