@@ -56,6 +56,7 @@ class YTDecodeStream:
                 self.__YTFile = pafy.new(self.__playURL + self.__ReferencePoint)
         except Exception as e:
             sys.stderr.write("[Error] URL Not found, please retry." + str(e) + " Reference Point: " + self.__ReferencePoint)
+            return False
 
     def __dwnldYTFile(self):
         try:
@@ -69,6 +70,7 @@ class YTDecodeStream:
                                                      filepath=self.__tempDir + self.__filename)
         except Exception as e:
             sys.stderr.write("[Error] Problem during download stream: " + str(e) + " - Reference Point: " + self.__ReferencePoint)
+            return False
 
     def __cnvrtYTFile(self):
         try:
@@ -90,6 +92,7 @@ class YTDecodeStream:
                 None
         except Exception as e:
             sys.stderr.write("[Error] Problem during stream download: " + str(e) + " - Reference Point: " + self.__ReferencePoint)
+            return False
 
     def __execConversion(self, cmd):
         try:
@@ -145,9 +148,15 @@ class YTDecodeStream:
         while i<= vListLenght:
             dataRef = str(vList.get(str(i))['DataRef'])
             args = ["PL", dataRef, "-f", "mp3"]
-            self.__setGlobalEnv(args)
-            self.__dwnldYTFile()
-            self.__cnvrtYTFile()
+            if self.__setGlobalEnv(args) is False:
+                i = i + 1
+                continue
+            if self.__dwnldYTFile() is False:
+                i = i + 1
+                continue
+            if self.__cnvrtYTFile() is False:
+                i = i + 1
+                continue
             i = i + 1
 
     def getSingle(self, args):
