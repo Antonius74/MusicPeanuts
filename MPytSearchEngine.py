@@ -44,9 +44,10 @@ class YTSearchEngine:
                             for span in divResult.find_all("span"):
                                 if "video-time" in span.get("class"):
                                     vTime = span.contents[0]
-                            i=i+1
                             MapContent = {"Title":title, "Type":"Video", "Source":"YT", "DataRef":dataContextItem, "Time":vTime, "VideoCount":None, "Thumb":srcThumb}
                             self.MapResultVideo.update({i:MapContent})
+                            i = i + 1
+
                     elif 'yt-lockup-playlist' in ytClass:
                         try:
                             if divResult.div.div.a['href'] != None:
@@ -67,6 +68,7 @@ class YTSearchEngine:
 
                         except Exception as e:
                             print(e)
+        return json.dumps(self.MapResultVideo, ensure_ascii=False)
 
 
     def getPLdetails(self, pList):
@@ -82,12 +84,12 @@ class YTSearchEngine:
     def getVideoResult(self):
         return
 
-print ("Enter qString:")
-qString = input()
-se = YTSearchEngine()
-print(se.getPLdetails(qString))
-    #qString = re.sub(' ', '+', qString)
-    #soup = getSoup(searchUrl+qString)
-    #getVideoInfo(soup)
+#print ("Enter qString:")
+#qString = input()
+#se = YTSearchEngine()
+#print(se.getPLdetails(qString))
+#qString = re.sub(' ', '+', qString)
+#soup = se.getSoup(se.searchUrl+qString)
+#print(se.getVideoInfo(soup))
 
 

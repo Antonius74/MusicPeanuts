@@ -4,38 +4,43 @@ import shutil
 import os
 import pexpect
 import configparser
-
+import json
+from MPytSearchEngine import YTSearchEngine
 
 
 class YTDecodeStream:
-    fileFormat = "mp3"
-    filename = ""
-    YTFile = None
-    YTFileInfo = None
-    config = configparser.RawConfigParser()
-    config.read('ConfigFile.properties')
-    ffmpegExe = config.get('ffmpeg', 'ffmpeg.LocalPath')
-    tempDir = config.get('Directory', 'Directory.TempDir')
-    fileDir = config.get('Directory', 'Directory.FileDir')
-    playURL = config.get('YTConfig', 'YTConfig.PlayURL')
+    __fileFormat = "mp3"
+    __ReferencePoint = ""
+    __filename = ""
+    __YTFile = None
+    __YTFileInfo = None
+    __config = configparser.RawConfigParser()
+    __config.read('ConfigFile.properties')
+    __ffmpegExe = __config.get('ffmpeg', 'ffmpeg.LocalPath')
+    __tempDir = __config.get('Directory', 'Directory.TempDir')
+    __fileDir = __config.get('Directory', 'Directory.FileDir')
+    __playURL = __config.get('YTConfig', 'YTConfig.PlayURL')
 
-    def __init__(self, args):
+    def __init__(self):
+        None
+
+    def __setGlobalEnv(self, args):
         if len(args) == 1:
             sys.stdout.write("Please use YTdownload URL -f format (mp3, mp4; if empty default mp3)")
             quit()
 
         try:
             if (len(args) > 2 and str(args[2].strip()) == "-f"):
-                fileFormat = args[3].lower();
-                if fileFormat == "mp4":
+                __fileFormat = args[3].lower();
+                if __fileFormat == "mp4":
                     sys.stdout.write("[Info] Apply MP4 format.\n")
-                    self.fileFormat = "mp4"
-                elif fileFormat == "mp3":
+                    self.__fileFormat = "mp4"
+                elif __fileFormat == "mp3":
                     sys.stdout.write("[Info] Apply MP3 format.\n")
-                    self.fileFormat = "mp3"
-                elif fileFormat == "avi":
+                    self.__fileFormat = "mp3"
+                elif __fileFormat == "avi":
                     sys.stdout.write("[Info] Apply AVI format.\n")
-                    self.fileFormat = "avi"
+                    self.__fileFormat = "avi"
                 else:
                     sys.stdout.write("[Warning] Format not found -> apply default MP3 format.\n")
             else:
@@ -44,43 +49,49 @@ class YTDecodeStream:
             sys.stdout.write("[Warning] Format not found -> apply default MP3 format.\n")
 
         try:
+            self.__ReferencePoint = args[1]
             if args[1].lower().startswith("^http"):
-                self.YTFile = pafy.new(args[1])
+                self.__YTFile = pafy.new(self.__ReferencePoint)
             else:
-                self.YTFile = pafy.new(self.playURL + args[1])
+                self.__YTFile = pafy.new(self.__playURL + self.__ReferencePoint)
         except Exception as e:
-            sys.stderr.write("[Error] URL Not found, please retry." + e)
-            quit()
+            sys.stderr.write("[Error] URL Not found, please retry." + str(e) + " Reference Point: " + self.__ReferencePoint)
 
-    def dwnldYTFile(self):
-        if self.fileFormat is "mp3":
-            self.YTFileInfo = self.YTFile.getbestaudio()
-        else:
-            self.YTFileInfo = self.YTFile.getbest()
-        self.filename = str(os.getpid())
-        self.YTFileInfo.download(quiet=True, callback=self.stdoutDownload,
-                                                 filepath=self.tempDir + self.filename)
+    def __dwnldYTFile(self):
+        try:
+            if self.__fileFormat is "mp3":
+                self.__YTFileInfo = self.__YTFile.getbestaudio()
+            else:
+                self.__YTFileInfo = self.__YTFile.getbest()
+            self.__filename = str(os.getpid())
+            print ("[Info] Preprarind Download -> " + self.__YTFileInfo.title + " - Reference Point: " + self.__ReferencePoint)
+            self.__YTFileInfo.download(quiet=True, callback=self.__stdoutDownload,
+                                                     filepath=self.__tempDir + self.__filename)
+        except Exception as e:
+            sys.stderr.write("[Error] Problem during download stream: " + str(e) + " - Reference Point: " + self.__ReferencePoint)
 
-    def cnvrtYTFile(self):
-        if self.fileFormat is "mp3":
-            cmdMP3 = self.ffmpegExe + "ffmpeg -hide_banner -y -i \"" + self.tempDir + self.filename + "\" -codec:a libmp3lame -qscale:a 1 \"" + self.fileDir + self.filename + ".mp3\""
-            self.execConversion(cmdMP3)
-            self.renameFile(self.fileDir + self.filename + ".mp3", self.fileDir + self.YTFileInfo.title + ".mp3")
-        elif self.fileFormat is "avi":
-            cmdAVI = self.ffmpegExe + "ffmpeg -hide_banner -y -async 1 -i \"" + self.tempDir + self.filename + "\" -f avi -b 700k -qscale 0 -ab 160k -ar 44100 \"" + self.fileDir + self.filename + ".avi\""
-            self.execConversion(cmdAVI)
-            self.renameFile(self.fileDir + self.filename + ".avi", self.fileDir + self.YTFileInfo.title + ".avi")
-        elif self.fileFormat is "mp4":
-            if self.YTFileInfo.extension == "webm":
-                cmdMP4 = self.ffmpegExe + "ffmpeg  -hide_banner -y -async 1 -i \"" + self.tempDir + self.filename + "\" -f mp4 -vcodec libx264 -preset fast -profile:v main -acodec aac \"" + self.fileDir + self.filename + ".mp4\""
-                self.execConversion(cmdMP4)
-                self.renameFile(self.fileDir + self.filename + ".mp4", self.fileDir + self.YTFileInfo.title + ".mp4")
-            elif self.YTFileInfo.extension == "mp4":
-                shutil.move(self.tempDir + self.filename, self.fileDir + self.YTFileInfo.title)
-            None
+    def __cnvrtYTFile(self):
+        try:
+            if self.__fileFormat is "mp3":
+                cmdMP3 = self.__ffmpegExe + "ffmpeg -hide_banner -y -i \"" + self.__tempDir + self.__filename + "\" -codec:a libmp3lame -qscale:a 1 \"" + self.__fileDir + self.__filename + ".mp3\""
+                self.__execConversion(cmdMP3)
+                self.__renameFile(self.__fileDir + self.__filename + ".mp3", self.__fileDir + self.__YTFileInfo.title + ".mp3")
+            elif self.__fileFormat is "avi":
+                cmdAVI = self.__ffmpegExe + "ffmpeg -hide_banner -y -async 1 -i \"" + self.__tempDir + self.__filename + "\" -f avi -b 700k -qscale 0 -ab 160k -ar 44100 \"" + self.__fileDir + self.__filename + ".avi\""
+                self.execConversion(cmdAVI)
+                self.renameFile(self.__fileDir + self.__filename + ".avi", self.__fileDir + self.__YTFileInfo.title + ".avi")
+            elif self.__fileFormat is "mp4":
+                if self.__YTFileInfo.extension == "webm":
+                    cmdMP4 = self.__ffmpegExe + "ffmpeg  -hide_banner -y -async 1 -i \"" + self.__tempDir + self.__filename + "\" -f mp4 -vcodec libx264 -preset fast -profile:v main -acodec aac \"" + self.__fileDir + self.__filename + ".mp4\""
+                    self.execConversion(cmdMP4)
+                    self.renameFile(self.__fileDir + self.__filename + ".mp4", self.__fileDir + self.__YTFileInfo.title + ".mp4")
+                elif self.__YTFileInfo.extension == "mp4":
+                    shutil.move(self.__tempDir + self.__filename, self.__fileDir + self.__YTFileInfo.title)
+                None
+        except Exception as e:
+            sys.stderr.write("[Error] Problem during stream download: " + str(e) + " - Reference Point: " + self.__ReferencePoint)
 
-    def execConversion(self, cmd):
-        print ("\n"+cmd)
+    def __execConversion(self, cmd):
         try:
             thread = pexpect.spawn(cmd)
             cpl = thread.compile_pattern_list([
@@ -93,36 +104,63 @@ class YTDecodeStream:
                     break
                 elif i == 1:
                     frame_number = thread.match.group(0)
-                    self.stdoutConvert(str(frame_number))
+                    self.__stdoutConvert(str(frame_number))
                     thread.close
                 elif i == 2:
                     pass
-        except ValueError:
-            sys.stderr.write (ValueError)
+        except Exception as e:
+            sys.stderr.write("[Error] Problem during stream conversion: " + str(e) + " - Reference Point: " + self.__ReferencePoint)
 
-    def stdoutDownload(self, total, recvd, ratio, rate, eta):
+    def __stdoutDownload(self, total, recvd, ratio, rate, eta):
         percent = (recvd / total) * 100
-        # time.sleep()
-        sys.stdout.write("\r[Downloading file from YT] -> %d%%" % round(percent))
+        sys.stdout.write("\r[Info] Prepare file from YT -> %d%%" % round(percent))
         sys.stdout.flush()
 
-    def stdoutConvert(self, frame_number):
-        try:
-            sys.stdout.write("\r[Converting file to " + self.fileFormat.upper() + "] -> " + frame_number[
+    def __stdoutConvert(self, frame_number):
+            sys.stdout.write("\r[Info] Converting file to " + self.__fileFormat.upper() + " -> " + frame_number[
                                                                                             frame_number.index(
                                                                                                 "size=") + 5:frame_number.index(
                                                                                                 "size=") + 15].strip())
             sys.stdout.flush()
+
+    def __destryDwnldFile(self):
+        try:
+            os.remove(self.__tempDir + self.__filename)
         except Exception as e:
-            None
+            sys.stderr.write("[Error] Problem during file deleting: " + str(e) + " - Reference Point: " + self.__ReferencePoint)
 
-    def destryDwnldFile(self):
-        os.remove(self.tempDir + self.filename)
+    def __renameFile(self, pid, __filename):
+        try:
+            os.renames(pid, __filename)
+            self.__destryDwnldFile()
+        except Exception as e:
+            sys.stderr.write("[Error] Problem during file renaming: " + str(e) + " - Reference Point: " + self.__ReferencePoint)
 
-    def renameFile(self, pid, filename):
-        os.renames(pid, filename)
-        dwnld.destryDwnldFile()
+    def getPlist(self, pListRef):
+        se = YTSearchEngine()
+        vList = json.loads(se.getPLdetails(pListRef[1]))
+        vListLenght = len(vList)
+        i = 1
+        print (vList)
+        while i<= vListLenght:
+            dataRef = str(vList.get(str(i))['DataRef'])
+            args = ["PL", dataRef, "-f", "mp3"]
+            self.__setGlobalEnv(args)
+            self.__dwnldYTFile()
+            self.__cnvrtYTFile()
+            i = i + 1
 
-dwnld = YTDecodeStream(sys.argv)
-dwnld.dwnldYTFile()
-dwnld.cnvrtYTFile()
+    def getSingle(self, args):
+        self.__setGlobalEnv(args)
+        self.__dwnldYTFile()
+        self.__cnvrtYTFile()
+
+print ("Enter qString:")
+qString = input()
+#args = ["SL", "GN4Lu9DHL3k", "-f", "mp3"]
+#ds = YTDecodeStream()
+#ds.getSingle(args)
+
+args = ["PL", qString, "-f", "mp3"]
+ds = YTDecodeStream()
+ds.getPlist(args)
