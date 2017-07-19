@@ -36,7 +36,7 @@ class YTDecodeStream:
                     sys.stdout.write("[Info] Apply MP4 format.\n")
                     self.__fileFormat = "mp4"
                 elif __fileFormat == "mp3":
-                    sys.stdout.write("[Info] Apply MP3 format.\n")
+                    sys.stdout.write("\n[Info] Apply MP3 format.\n")
                     self.__fileFormat = "mp3"
                 elif __fileFormat == "avi":
                     sys.stdout.write("[Info] Apply AVI format.\n")
