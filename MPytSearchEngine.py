@@ -19,7 +19,6 @@ class YTSearchEngine:
         None
 
     def getSoup(self, qString):
-        print (qString)
         http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
         httpRequest = http.request('GET', qString)
         return BeautifulSoup(httpRequest.data, "html.parser")

@@ -160,16 +160,19 @@ class YTDecodeStream:
             i = i + 1
 
     def getSingle(self, args):
-        self.__setGlobalEnv(args)
-        self.__dwnldYTFile()
-        self.__cnvrtYTFile()
+        if self.__setGlobalEnv(args) is False:
+            quit()
+        if self.__dwnldYTFile() is False:
+            quit()
+        if self.__cnvrtYTFile() is False:
+            quit()
 
 print ("Enter qString:")
 qString = input()
-#args = ["SL", "GN4Lu9DHL3k", "-f", "mp3"]
-#ds = YTDecodeStream()
-#ds.getSingle(args)
-
-args = ["PL", qString, "-f", "mp3"]
+args = ["SL", "GN4Lu9DHL3k", "-f", "mp3"]
 ds = YTDecodeStream()
-ds.getPlist(args)
+ds.getSingle(args)
+
+#args = ["PL", qString, "-f", "mp3"]
+#ds = YTDecodeStream()
+#ds.getPlist(args)
