@@ -169,10 +169,10 @@ class YTDecodeStream:
 
 print ("Enter qString:")
 qString = input()
-args = ["SL", "GN4Lu9DHL3k", "-f", "mp3"]
-ds = YTDecodeStream()
-ds.getSingle(args)
-
-#args = ["PL", qString, "-f", "mp3"]
+#args = ["SL", "GN4Lu9DHL3k", "-f", "mp3"]
 #ds = YTDecodeStream()
-#ds.getPlist(args)
+#ds.getSingle(args)
+
+args = ["PL", qString, "-f", "mp3"]
+ds = YTDecodeStream()
+ds.getPlist(args)
