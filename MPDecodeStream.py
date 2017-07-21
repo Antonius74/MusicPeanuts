@@ -80,13 +80,14 @@ class YTDecodeStream:
                 self.__renameFile(self.__fileDir + self.__filename + ".mp3", self.__fileDir + self.__YTFileInfo.title + ".mp3")
             elif self.__fileFormat is "avi":
                 cmdAVI = self.__ffmpegExe + "ffmpeg -hide_banner -y -async 1 -i \"" + self.__tempDir + self.__filename + "\" -f avi -b 700k -qscale 0 -ab 160k -ar 44100 \"" + self.__fileDir + self.__filename + ".avi\""
-                self.execConversion(cmdAVI)
-                self.renameFile(self.__fileDir + self.__filename + ".avi", self.__fileDir + self.__YTFileInfo.title + ".avi")
+                self.__execConversion(cmdAVI)
+                self.__renameFile(self.__fileDir + self.__filename + ".avi", self.__fileDir + self.__YTFileInfo.title + ".avi")
             elif self.__fileFormat is "mp4":
                 if self.__YTFileInfo.extension == "webm":
                     cmdMP4 = self.__ffmpegExe + "ffmpeg  -hide_banner -y -async 1 -i \"" + self.__tempDir + self.__filename + "\" -f mp4 -vcodec libx264 -preset fast -profile:v main -acodec aac \"" + self.__fileDir + self.__filename + ".mp4\""
-                    self.execConversion(cmdMP4)
-                    self.renameFile(self.__fileDir + self.__filename + ".mp4", self.__fileDir + self.__YTFileInfo.title + ".mp4")
+                    self.__execConversion(cmdMP4)
+                    self.__renameFile(self.__fileDir + self.__filename + ".mp4", self.__fileDir + self.__YTFileInfo.title + ".mp4")
+
                 elif self.__YTFileInfo.extension == "mp4":
                     shutil.move(self.__tempDir + self.__filename, self.__fileDir + self.__YTFileInfo.title)
                 None
@@ -122,13 +123,13 @@ class YTDecodeStream:
     def __stdoutConvert(self, frame_number):
             sys.stdout.write("\r[Info] Converting file to " + self.__fileFormat.upper() + " -> " + frame_number[
                                                                                             frame_number.index(
-                                                                                                "size=") + 5:frame_number.index(
-                                                                                                "size=") + 15].strip())
+                                                                                                "size") + 5:frame_number.index(
+                                                                                                "size") + 15].strip())
             sys.stdout.flush()
 
     def __destryDwnldFile(self):
         try:
-            os.remove(self.__tempDir + self.__filename)
+            None#os.remove(self.__tempDir + self.__filename)
         except Exception as e:
             sys.stderr.write("[Error] Problem during file deleting: " + str(e) + " - Reference Point: " + self.__ReferencePoint)
 
@@ -169,10 +170,10 @@ class YTDecodeStream:
 
 print ("Enter qString:")
 qString = input()
-#args = ["SL", "GN4Lu9DHL3k", "-f", "mp3"]
-#ds = YTDecodeStream()
-#ds.getSingle(args)
-
-args = ["PL", qString, "-f", "mp3"]
+args = ["SL", "_HONxwhwmgU", "-f", "mp4"]
 ds = YTDecodeStream()
-ds.getPlist(args)
+ds.getSingle(args)
+
+#args = ["PL", qString, "-f", "mp3"]
+#ds = YTDecodeStream()
+#ds.getPlist(args)
