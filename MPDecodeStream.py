@@ -89,7 +89,7 @@ class YTDecodeStream:
                     self.__renameFile(self.__fileDir + self.__filename + ".mp4", self.__fileDir + self.__YTFileInfo.title + ".mp4")
 
                 elif self.__YTFileInfo.extension == "mp4":
-                    shutil.move(self.__tempDir + self.__filename, self.__fileDir + self.__YTFileInfo.title)
+                    shutil.move(self.__tempDir + self.__filename, self.__fileDir + self.__YTFileInfo.title + ".mp4")
                 None
         except Exception as e:
             sys.stderr.write("[Error] Problem during stream download: " + str(e) + " - Reference Point: " + self.__ReferencePoint)
@@ -170,7 +170,7 @@ class YTDecodeStream:
 
 print ("Enter qString:")
 qString = input()
-args = ["SL", "_HONxwhwmgU", "-f", "mp4"]
+args = ["SL", "v2AC41dglnM", "-f", "mp4"]
 ds = YTDecodeStream()
 ds.getSingle(args)
 
