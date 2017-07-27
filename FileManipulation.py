@@ -1,9 +1,11 @@
-
 from mutagen.id3 import ID3, APIC
+import urllib.request
 
-audio = ID3("/home/Antonius/PycharmProjects/MusicPeanuts/file/Franco Battiato - L'ombra della luce.mp3")
+audio = ID3("/Users/antoniolatela//PycharmProjects/MusicPeanuts/file/Pink Floyd - The Dark Side of the Moon - Eclipse (FLAC).mp3")
 
-with open('/home/Antonius/PycharmProjects/MusicPeanuts/temp/img/default.jpg', 'rb') as albumart:
+urllib.request.urlretrieve("https://i.ytimg.com/vi/BV-ASc0qkrM/hqdefault.jpg?sqp=-oaymwEXCPYBEIoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAz44oMpt3IkVu5a2TSIIJkftyqPw", "./local-filename.jpg")
+
+with open('./local-filename.jpg', 'rb') as albumart:
     audio['APIC'] = APIC(
                       encoding=3,
                       mime='image/jpeg',

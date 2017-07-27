@@ -169,10 +169,10 @@ class YTDecodeStream:
             quit()
 
 
-args = ["SL", "v2AC41dglnM", "-f", "mp3"]
-ds = YTDecodeStream()
-ds.getSingle(args)
-
-#args = ["PL", qString, "-f", "mp3"]
+#args = ["SL", "58_S5e0AVU0", "-f", "mp3"]
 #ds = YTDecodeStream()
-#ds.getPlist(args)
+#ds.getSingle(args)
+
+args = ["PL", "PLvy5jih231dYToxVkCz4xN2SX6zqVkeYT", "-f", "mp3"]
+ds = YTDecodeStream()
+ds.getPlist(args)
