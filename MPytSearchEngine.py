@@ -83,12 +83,12 @@ class YTSearchEngine:
     def getVideoResult(self):
         return
 
-#print ("Enter qString:")
-#qString = input()
-#se = YTSearchEngine()
+print ("Enter qString:")
+qString = input()
+se = YTSearchEngine()
 #print(se.getPLdetails(qString))
-#qString = re.sub(' ', '+', qString)
-#soup = se.getSoup(se.searchUrl+qString)
-#print(se.getVideoInfo(soup))
+qString = re.sub(' ', '+', qString)
+soup = se.getSoup(se.searchUrl+qString)
+print(se.getVideoInfo(soup))
 
 

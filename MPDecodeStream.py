@@ -129,7 +129,7 @@ class YTDecodeStream:
 
     def __destryDwnldFile(self):
         try:
-            None#os.remove(self.__tempDir + self.__filename)
+            os.remove(self.__tempDir + self.__filename)
         except Exception as e:
             sys.stderr.write("[Error] Problem during file deleting: " + str(e) + " - Reference Point: " + self.__ReferencePoint)
 
@@ -168,9 +168,8 @@ class YTDecodeStream:
         if self.__cnvrtYTFile() is False:
             quit()
 
-print ("Enter qString:")
-qString = input()
-args = ["SL", "v2AC41dglnM", "-f", "mp4"]
+
+args = ["SL", "v2AC41dglnM", "-f", "mp3"]
 ds = YTDecodeStream()
 ds.getSingle(args)
 
