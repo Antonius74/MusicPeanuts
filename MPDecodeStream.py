@@ -6,7 +6,7 @@ import pexpect
 import configparser
 import json
 from MPytSearchEngine import YTSearchEngine
-
+from FileManipulation import FileManipulation
 
 class YTDecodeStream:
     __fileFormat = "mp3"
@@ -135,6 +135,10 @@ class YTDecodeStream:
 
     def __renameFile(self, pid, __filename):
         try:
+            fm = FileManipulation()
+            print ("\n" + pid + self.__YTFile.bigthumb)
+            fm.setImage(pid, self.__YTFile.bigthumb, "temp.jpg")
+            #print (pid + " --- " + __filename)
             os.renames(pid, __filename)
             self.__destryDwnldFile()
         except Exception as e:
@@ -148,7 +152,7 @@ class YTDecodeStream:
         print (vList)
         while i<= vListLenght:
             dataRef = str(vList.get(str(i))['DataRef'])
-            args = ["PL", dataRef, "-f", "mp3"]
+            args = ["PL", dataRef, "-f", pListRef[3]]
             if self.__setGlobalEnv(args) is False:
                 i = i + 1
                 continue
@@ -173,6 +177,6 @@ class YTDecodeStream:
 #ds = YTDecodeStream()
 #ds.getSingle(args)
 
-args = ["PL", "PLvy5jih231dYToxVkCz4xN2SX6zqVkeYT", "-f", "mp3"]
+args = ["PL", "PLXIdhrTXbAT2e5YIvo55jcQtNjgdFHYe_", "-f", "mp3"]
 ds = YTDecodeStream()
 ds.getPlist(args)
