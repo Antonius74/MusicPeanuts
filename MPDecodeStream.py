@@ -137,8 +137,7 @@ class YTDecodeStream:
         try:
             fm = FileManipulation()
             print ("\n" + pid + self.__YTFile.bigthumb)
-            fm.setImage(pid, self.__YTFile.bigthumb, "temp.jpg")
-            #print (pid + " --- " + __filename)
+            fm.setImage(pid, self.__YTFile.bigthumb, self.__ReferencePoint + "jpg")
             os.renames(pid, __filename)
             self.__destryDwnldFile()
         except Exception as e:
@@ -173,10 +172,10 @@ class YTDecodeStream:
             quit()
 
 
-#args = ["SL", "58_S5e0AVU0", "-f", "mp3"]
-#ds = YTDecodeStream()
-#ds.getSingle(args)
-
-args = ["PL", "PLXIdhrTXbAT2e5YIvo55jcQtNjgdFHYe_", "-f", "mp3"]
+args = ["SL", "4N3N1MlvVc4", "-f", "mp4"]
 ds = YTDecodeStream()
-ds.getPlist(args)
+ds.getSingle(args)
+
+#args = ["PL", "PL36494E8634856791", "-f", "mp4"]
+#ds = YTDecodeStream()
+#ds.getPlist(args)

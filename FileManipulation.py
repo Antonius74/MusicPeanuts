@@ -2,7 +2,7 @@ from mutagen.id3 import ID3, APIC
 import urllib.request
 import configparser
 import sys
-
+import os
 
 class FileManipulation:
     __config = configparser.RawConfigParser()
@@ -31,6 +31,7 @@ class FileManipulation:
                                   data=albumart.read()
                                 )
             audio.save()
+            os.remove(self.__tempImgDir + localTempImage)
         except Exception as e:
             sys.stderr.write("[Error] Problem during file manipulation: " + str(e))
 
