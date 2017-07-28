@@ -35,5 +35,3 @@ class FileManipulation:
         except Exception as e:
             sys.stderr.write("[Error] Problem during file manipulation: " + str(e))
 
-#fm = FileManipulation()
-#fm.setImage( "/Users/antoniolatela/PycharmProjects/MusicPeanuts/file/3719.mp3", "https://i.ytimg.com/vi/zEYJrBoxvOE/default.jpg",  "pippo.jpg")
