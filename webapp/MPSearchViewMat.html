@@ -1,0 +1,266 @@
+<html>
+   <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Material Design Lite</title>
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="images/android-desktop.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Music Peanuts">
+    <link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+
+
+      <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
+      <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+      <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.deep_purple-blue.min.css" />
+
+     <style>
+          .mdl-firstcell {
+            height: 5%
+          }
+          .mdl-firstcell-lat {
+            height: 0%
+          }
+
+         .content-grid {
+            background-color: #f3f3f3;
+            width: auto;
+            align-items: top;
+          }
+
+          .layout-background {
+            background-color: #f3f3f3;
+          }
+
+         .graybox {
+            background-color:#ddd;
+         }
+
+        .material-icons.md-light { color: rgba(255, 255, 255, 1); }
+
+        .mdl-card__media {
+            margin: 0;
+        }
+        .mdl-card__media > img {
+            width: 100%;
+        }
+
+        .mdl-card {
+            width: 80%;
+        }
+        .mdl-card__actions {
+            display: flex;
+            box-sizing:border-box;
+            align-items: center;
+        }
+        .mdl-card__actions > .mdl-button--icon {
+            margin-right: 3px;
+            margin-left: 1px;
+        }
+
+        .dialog-container {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            overflow: scroll;
+            background: rgba(0, 0, 0, 0);
+            z-index: 9999;
+            opacity: 0;
+            -webkit-transition: opacity 500ms ease-in;
+            -moz-transition: opacity 500ms ease-in;
+            transition: opacity 500ms ease-in;
+        }
+
+        .dialog-container > div {
+            position: relative;
+            width: 95%;
+            height: auto;
+            max-width: 500px;
+            min-height: 25px;
+            margin: 10% auto;
+            z-index: 99999;
+            padding: 1px 1px 1px 1px;
+        }
+</style>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+
+<script type='text/javascript'>//<![CDATA[
+
+function setVideo (ytid, id) {
+    showDialog({
+        text: '<iframe width="300" height="315" src="https://www.youtube.com/embed/'+ ytid +'?autoplay=1" frameborder="0" allowfullscreen></iframe>',
+        id: id
+    });
+
+/* library */
+
+function showDialog(options) {
+
+    options = $.extend({
+        id: null,
+        title: null,
+        text: null,
+        negative: false,
+        positive: false,
+        cancelable: true,
+        contentStyle: null,
+        onLoaded: false
+    }, options);
+
+    // remove existing dialogs
+    $('.dialog-container').remove();
+    $(document).unbind("keyup.dialog");
+
+    $('<div id="' + options.id + '" class="dialog-container"><div class="mdl-card mdl-shadow--16dp"></div></div>').appendTo("body");
+    var dialog = $('#orrsDiag');
+    var content = dialog.find('.mdl-card');
+    if (options.contentStyle != null) content.css(options.contentStyle);
+    if (options.title != null) {
+        $('<h5>' + options.title + '</h5>').appendTo(content);
+    }
+    if (options.text != null) {
+        $('<p>' + options.text + '</p>').appendTo(content);
+    }
+
+    componentHandler.upgradeDom();
+    if (options.cancelable) {
+        dialog.click(function () {
+            hideDialog(dialog);
+        });
+        $(document).bind("keyup.dialog", function (e) {
+            if (e.which == 27)
+                hideDialog(dialog);
+        });
+        content.click(function (e) {
+            e.stopPropagation();
+        });
+    }
+    setTimeout(function () {
+        dialog.css({opacity: 1});
+        if (options.onLoaded)
+            options.onLoaded();
+    }, 1);
+}
+
+function hideDialog(dialog) {
+    $(document).unbind("keyup.dialog");
+    dialog.css({opacity: 0});
+    setTimeout(function () {
+        dialog.remove();
+    }, 400);
+}
+}//]]>
+
+</script>
+
+
+   </head>
+
+   <body>
+   <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <header class="mdl-layout__header">
+         <div class="mdl-layout__header-row">
+            <span class="mdl-layout-title">Music Peanuts</span>
+         </div>
+      </header>
+      <div class="mdl-layout__drawer">
+         <span class="mdl-layout-title">Menu</span>
+         <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="">Login</a>
+            <a class="mdl-navigation__link" href="">About</a>
+         </nav>
+      </div>
+      <main class="mdl-layout__content layout-background">
+
+      <!--<div class="mdl-layout-spacer"></div>-->
+         <div class="content-grid mdl-grid">
+
+
+            <div class="mdl-cell mdl-firstcell-lat mdl-cell--4-col "></div>
+            <div class="mdl-cell mdl-firstcell mdl-cell--4-col">
+        <center>
+          <form action="#">
+            <div class="mdl-textfield mdl-js-textfield ">
+               <input class="mdl-textfield__input" type="text" id="text1">
+               <label class="mdl-textfield__label" for="text1">Search for video</label>
+            </div>
+           </form>
+        </center>
+            </div>
+            <div class="mdl-cell mdl-firstcell-lat mdl-cell--4-col"></div>
+            <div class="mdl-layout-spacer"></div>
+
+           <div class="mdl-cell mdl-cell--4-col">
+
+                 <div class="mdl-card  mdl-shadow--4dp">
+
+                    <div class="mdl-card__media">
+                      <img src="https://i.ytimg.com/vi/Lli99OmkPwM/hqdefault.jpg?sqp=-oaymwEXCPYBEIoBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLBNr5piUd_O_kZoL5dEEpltMVfSsQ" width="330" height="180" border="0"
+                     alt="" style="padding:0px;">
+                    </div>
+
+                    <div class="mdl-card__title">
+                      <div class="mdl-card__title-text">
+                      Metallica - Nothing Else Matters 2007 Live Video Full HD
+                      </div>
+                    </div>
+
+                   <div class="mdl-card__actions mdl-card--border">
+                    <button id="show-info" onClick="setVideo('Lli99OmkPwM', 'orrsDiag')" class="mdl-button mdl-js-button mdl-button--icon mdl-button--fab mdl-button--mini-fab mdl-button--colored">
+                      <i class="material-icons md-light">play_arrow</i>
+                    </button>
+                    <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--fab mdl-button--mini-fab mdl-button--colored">
+                      <i class="material-icons" color="#FFF">add</i>
+                    </button>
+
+                    <button id="save" class="mdl-button mdl-js-button mdl-button--icon mdl-button--fab mdl-button--mini-fab mdl-button--colored">
+                      <i class="material-icons md-light">save</i>
+                    </button>
+                    <ul class="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect" for="save">
+                      <li class="mdl-menu__item"><i class="material-icons">audiotrack</i>MP3</li>
+                      <li class="mdl-menu__item"><i class="material-icons">videocam</i>MP4</li>
+                    </ul>
+
+                    <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--fab mdl-button--mini-fab mdl-button--colored">
+                      <i class="material-icons">delete</i>
+                    </button>
+
+                <div class="mdl-layout-spacer"></div>
+
+    	          <button class="mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">favorite</i></button>
+                  <button id="share" class="mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">share</i></button>
+				    <ul class="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect" for="share">
+                      <li class="mdl-menu__item">Facebook</li>
+                      <li class="mdl-menu__item">Twitter</li>
+                      <li class="mdl-menu__item">Pinterest</li>
+                    </ul>
+      </div>
+    </div>
+
+
+
+           </div>
+
+         </div>
+
+      </main>
+   </div>
+</body>
+</html>

@@ -83,12 +83,18 @@ class YTSearchEngine:
     def getVideoResult(self):
         return
 
-print ("Enter qString:")
-qString = input()
-se = YTSearchEngine()
-#print(se.getPLdetails(qString))
-qString = re.sub(' ', '+', qString)
-soup = se.getSoup(se.searchUrl+qString)
-print(se.getVideoInfo(soup))
+    def main(self):
+        qString = input("Enter qString:")
+        se = YTSearchEngine()
+        # print(se.getPLdetails(qString))
+        qString = re.sub(' ', '+', qString)
+        soup = se.getSoup(se.searchUrl + qString)
+        print(se.getVideoInfo(soup))
+
+if __name__ == '__main__':
+    se = YTSearchEngine()
+    se.main()
+
+
 
 

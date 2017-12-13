@@ -7,6 +7,7 @@ import configparser
 import json
 from MPytSearchEngine import YTSearchEngine
 from FileManipulation import FileManipulation
+import UploadToGDrive
 
 class YTDecodeStream:
     __fileFormat = "mp3"
@@ -18,6 +19,7 @@ class YTDecodeStream:
     __config.read('ConfigFile.properties')
     __ffmpegExe = __config.get('ffmpeg', 'ffmpeg.LocalPath')
     __tempDir = __config.get('Directory', 'Directory.TempDir')
+    __GDrive = __config.get('Directory', 'Directory.Gdrive')
     __fileDir = __config.get('Directory', 'Directory.FileDir')
     __playURL = __config.get('YTConfig', 'YTConfig.PlayURL')
 
@@ -78,6 +80,9 @@ class YTDecodeStream:
                 cmdMP3 = self.__ffmpegExe + "ffmpeg -hide_banner -y -i \"" + self.__tempDir + self.__filename + "\" -codec:a libmp3lame -qscale:a 1 \"" + self.__fileDir + self.__filename + ".mp3\""
                 self.__execConversion(cmdMP3)
                 self.__renameFile(self.__fileDir + self.__filename + ".mp3", self.__fileDir + self.__YTFileInfo.title + ".mp3")
+                print(self.__fileDir + self.__filename + ".mp3", self.__fileDir + self.__YTFileInfo.title + ".mp3")
+                if self.__GDrive:
+                    UploadToGDrive.main(self.__fileDir, self.__YTFileInfo.title + ".mp3")
             elif self.__fileFormat is "avi":
                 cmdAVI = self.__ffmpegExe + "ffmpeg -hide_banner -y -async 1 -i \"" + self.__tempDir + self.__filename + "\" -f avi -b 700k -qscale 0 -ab 160k -ar 44100 \"" + self.__fileDir + self.__filename + ".avi\""
                 self.__execConversion(cmdAVI)
@@ -87,7 +92,8 @@ class YTDecodeStream:
                     cmdMP4 = self.__ffmpegExe + "ffmpeg  -hide_banner -y -async 1 -i \"" + self.__tempDir + self.__filename + "\" -f mp4 -vcodec libx264 -preset fast -profile:v main -acodec aac \"" + self.__fileDir + self.__filename + ".mp4\""
                     self.__execConversion(cmdMP4)
                     self.__renameFile(self.__fileDir + self.__filename + ".mp4", self.__fileDir + self.__YTFileInfo.title + ".mp4")
-
+                if self.__GDrive:
+                    UploadToGDrive.main(self.__fileDir, self.__YTFileInfo.title + ".mp4")
                 elif self.__YTFileInfo.extension == "mp4":
                     shutil.move(self.__tempDir + self.__filename, self.__fileDir + self.__YTFileInfo.title + ".mp4")
                 None
@@ -152,13 +158,13 @@ class YTDecodeStream:
         while i<= vListLenght:
             dataRef = str(vList.get(str(i))['DataRef'])
             args = ["PL", dataRef, "-f", pListRef[3]]
-            if self.__setGlobalEnv(args) is False:
+            if not self.__setGlobalEnv(args):
                 i = i + 1
                 continue
-            if self.__dwnldYTFile() is False:
+            if not self.__dwnldYTFile():
                 i = i + 1
                 continue
-            if self.__cnvrtYTFile() is False:
+            if not self.__cnvrtYTFile():
                 i = i + 1
                 continue
             i = i + 1
@@ -171,11 +177,16 @@ class YTDecodeStream:
         if self.__cnvrtYTFile() is False:
             quit()
 
+    def main(self, args):
+        #ds.getPlist(args)
+        ds.getSingle(args)
 
-#args = ["SL", "BQBp4rfhsZU", "-f", "mp4"]
+
+if __name__ == '__main__':
+    ds = YTDecodeStream()
+    ds.main(["", "RLiinFzl-WY", "-f", "mp3"])
+
+
+#args = ["PL", "PLmo4pBukfRoN8SB5RKvfiY9CTl9pI_IFc", "-f", "mp3"] https://www.youtube.com/watch?v=zIklhgI-m2s
 #ds = YTDecodeStream()
-#ds.getSingle(args)
-
-args = ["PL", "PLEQdwrAGbxncZFLH4KETau3-uncnqVtWD", "-f", "mp3"]
-ds = YTDecodeStream()
-ds.getPlist(args)
+#ds.getPlist(args)
