@@ -79,7 +79,8 @@ def main(file_path, file_name):
 
 
 if __name__ == '__main__':
-    None#main("Foo Fighters - Walking After You.mp3")
+    #None#
+    main("/Users/.../PycharmProjects/MusicPeanuts/file/","Full Version Highest Quality| Mystery of Love | Sufjan Stevens.mp3")
 
 
 '''

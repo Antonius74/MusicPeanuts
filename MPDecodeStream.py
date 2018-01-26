@@ -10,6 +10,9 @@ from FileManipulation import FileManipulation
 import UploadToGDrive
 
 class YTDecodeStream:
+    ###
+    x = 0
+    ###
     __fileFormat = "mp3"
     __ReferencePoint = ""
     __filename = ""
@@ -59,6 +62,7 @@ class YTDecodeStream:
         except Exception as e:
             sys.stderr.write("[Error] URL Not found, please retry." + str(e) + " Reference Point: " + self.__ReferencePoint)
             return False
+        return True
 
     def __dwnldYTFile(self):
         try:
@@ -70,6 +74,7 @@ class YTDecodeStream:
             print ("[Info] Preprarind Download -> " + self.__YTFileInfo.title + " - Reference Point: " + self.__ReferencePoint)
             self.__YTFileInfo.download(quiet=True, callback=self.__stdoutDownload,
                                                      filepath=self.__tempDir + self.__filename)
+            return True
         except Exception as e:
             sys.stderr.write("[Error] Problem during download stream: " + str(e) + " - Reference Point: " + self.__ReferencePoint)
             return False
@@ -82,21 +87,27 @@ class YTDecodeStream:
                 self.__renameFile(self.__fileDir + self.__filename + ".mp3", self.__fileDir + self.__YTFileInfo.title + ".mp3")
                 print(self.__fileDir + self.__filename + ".mp3", self.__fileDir + self.__YTFileInfo.title + ".mp3")
                 if self.__GDrive:
-                    UploadToGDrive.main(self.__fileDir, self.__YTFileInfo.title + ".mp3")
+                    None #UploadToGDrive.main(self.__fileDir, self.__YTFileInfo.title + ".mp3")
             elif self.__fileFormat is "avi":
                 cmdAVI = self.__ffmpegExe + "ffmpeg -hide_banner -y -async 1 -i \"" + self.__tempDir + self.__filename + "\" -f avi -b 700k -qscale 0 -ab 160k -ar 44100 \"" + self.__fileDir + self.__filename + ".avi\""
                 self.__execConversion(cmdAVI)
                 self.__renameFile(self.__fileDir + self.__filename + ".avi", self.__fileDir + self.__YTFileInfo.title + ".avi")
+                if self.__GDrive:
+                    None  #UploadToGDrive.main(self.__fileDir, self.__YTFileInfo.title + ".avi")
             elif self.__fileFormat is "mp4":
                 if self.__YTFileInfo.extension == "webm":
                     cmdMP4 = self.__ffmpegExe + "ffmpeg  -hide_banner -y -async 1 -i \"" + self.__tempDir + self.__filename + "\" -f mp4 -vcodec libx264 -preset fast -profile:v main -acodec aac \"" + self.__fileDir + self.__filename + ".mp4\""
                     self.__execConversion(cmdMP4)
                     self.__renameFile(self.__fileDir + self.__filename + ".mp4", self.__fileDir + self.__YTFileInfo.title + ".mp4")
-                if self.__GDrive:
-                    UploadToGDrive.main(self.__fileDir, self.__YTFileInfo.title + ".mp4")
                 elif self.__YTFileInfo.extension == "mp4":
-                    shutil.move(self.__tempDir + self.__filename, self.__fileDir + self.__YTFileInfo.title + ".mp4")
-                None
+                    ###
+                    self.x = self.x + 1
+                    ###
+
+                    shutil.move(self.__tempDir + self.__filename, self.__fileDir + str(self.x) + "_" + self.__YTFileInfo.title + ".mp4")
+                if self.__GDrive:
+                    None  #UploadToGDrive.main(self.__fileDir, self.__YTFileInfo.title + ".mp4")
+            return True
         except Exception as e:
             sys.stderr.write("[Error] Problem during stream download: " + str(e) + " - Reference Point: " + self.__ReferencePoint)
             return False
@@ -144,6 +155,9 @@ class YTDecodeStream:
             fm = FileManipulation()
             print ("\n" + pid + self.__YTFile.bigthumb)
             fm.setImage(pid, self.__YTFile.bigthumb, self.__ReferencePoint + ".jpg")
+            ###
+            x = self.x+1
+            ###
             os.renames(pid, __filename)
             self.__destryDwnldFile()
         except Exception as e:
@@ -184,9 +198,5 @@ class YTDecodeStream:
 
 if __name__ == '__main__':
     ds = YTDecodeStream()
-    ds.main(["", "RLiinFzl-WY", "-f", "mp3"])
+    ds.main(["", "CWtkGnZS9G4", "-f", "mp4"])
 
-
-#args = ["PL", "PLmo4pBukfRoN8SB5RKvfiY9CTl9pI_IFc", "-f", "mp3"] https://www.youtube.com/watch?v=zIklhgI-m2s
-#ds = YTDecodeStream()
-#ds.getPlist(args)
